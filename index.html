@@ -5,23 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Camera Background UI</title>
     <link rel="stylesheet" href="src/style.css" />
-    <link rel="icon" type="image/svg" href="potato.svg">
   </head>
   <body>
     <!-- 카메라 영상 -->
     <video id="camera-bg" autoplay playsinline></video>
 
-    <!-- 아바타 박스 (영상) -->
-    <div class="avatar-box">
-      <video id="avatarVideo" muted playsinline preload="auto"></video>
-      <video
-        id="avatarVideo2"
-        muted
-        playsinline
-        preload="auto"
-        style="display: none"
-      ></video>
-    </div>
+    <!-- 아바타 박스 (VRM 캔버스) -->
+    <div class="avatar-box" id="avatar-container"></div>
 
     <!-- 왼쪽 하단 토글 -->
     <div class="toggle-box">
@@ -33,6 +23,6 @@
       <div class="subtitle" id="subtitle">여기에 자막이 표시됩니다.</div>
     </div>
 
-    <script src="src/script.ts"></script>
+    <script type="module" src="./src/script.ts"></script>
   </body>
 </html>
