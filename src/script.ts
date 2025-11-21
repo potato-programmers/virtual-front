@@ -13,29 +13,58 @@ async function startCamera() {
 }
 startCamera();
 
-// --- VRM 설정 ---
+// --- VRM 및 애니메이션 설정 ---
 const avatarContainer = document.getElementById('avatar-container');
 let vrmManager: VRMManager | null = null;
 
-if (avatarContainer) {
+async function initializeVRM() {
+  if (!avatarContainer) {
+    console.error("Avatar container not found!");
+    return;
+  }
+
   vrmManager = new VRMManager(avatarContainer);
-  vrmManager.loadVRM('3DModel-Kurone/models/Kurone_all.vrm');
+
+  try {
+    // VRM 모델 로드
+    await vrmManager.loadVRM('3DModel-Kurone/models/Kurone.vrm');
+
+    // JSON 애니메이션 파일들 로드
+    const animationUrls = [
+      './actions/hello.json',
+      './actions/thankyou.json',
+      './actions/love.json',
+    ];
+
+    for (const url of animationUrls) {
+      await vrmManager.loadAnimationFromJSON(url);
+    }
+
+    console.log("VRM and JSON animations are ready.");
+    const subtitle = document.getElementById("subtitle");
+    if (subtitle) {
+      subtitle.innerText = "안녕하세요! 스페이스바를 눌러 수어를 시작하세요.";
+    }
+
+  } catch (error) {
+    console.error("Failed to load VRM or animations:", error);
+    alert("모델 또는 애니메이션을 로드하는 데 실패했습니다.");
+  }
 }
+
+initializeVRM();
+
 
 // --- 키보드 이벤트 리스너 ---
 window.addEventListener('keydown', (e) => {
   if (!vrmManager) return;
 
-  // 스페이스바: 다음 수어 동작
   if (e.code === 'Space') {
-    console.log('Space key pressed');
-    e.preventDefault(); // 페이지 스크롤 방지
+    e.preventDefault();
     vrmManager.playNextSignAnimation();
   }
 
-  // 'Z' 키: 기본 상태로 돌아가기
   if (e.key.toLowerCase() === 'z') {
-    console.log('Z key pressed');
     vrmManager.resetToIdle();
   }
 });
@@ -54,14 +83,5 @@ if (modeBtn) {
 
 const subtitle = document.getElementById("subtitle");
 if (subtitle) {
-  const subtitles = [
-    "안녕하세요! 스페이스바를 눌러 수어를 시작하세요.",
-    "Z 키를 누르면 기본 자세로 돌아갑니다.",
-    "다양한 수어 동작을 확인해보세요.",
-  ];
-  let subIndex = 0;
-  setInterval(() => {
-    subtitle.innerText = subtitles[subIndex];
-    subIndex = (subIndex + 1) % subtitles.length;
-  }, 5000);
+  subtitle.innerText = "모델을 로드하는 중입니다...";
 }
