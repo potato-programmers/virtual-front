@@ -1,0 +1,76 @@
+name: Deploy Vite Project to GitHub Pages
+
+# main 브랜치에 푸시될 때 워크플로우를 실행합니다.
+on:
+  push:
+    branches:
+      - ["feat/pages"]
+  # Actions 탭에서 수동으로 이 워크플로우를 실행할 수 있도록 허용
+  workflow_dispatch:
+
+# 워크플로우 실행에 대한 권한을 설정합니다.
+# GITHUB_TOKEN에 대한 기본 권한을 설정하여 배포 워크플로우가 작동하도록 합니다.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시성 제어를 설정하여, 동일한 커밋에 대해 여러 워크플로우가 실행되는 것을 방지합니다.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # 1. 빌드 잡
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      # Vite는 base 경로를 자동으로 설정하지 않으므로, package.json의 homepage를 사용하거나
+      # vite.config.js에서 직접 설정해야 합니다. 여기서는 vite.config.js를 사용합니다.
+      - name: Build project
+        run: pnpm run build
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 빌드 출력 디렉토리를 업로드합니다.
+          path: './dist'
+
+  # 2. 배포 잡
+  deploy:
+    # build 잡이 성공적으로 완료된 후에만 실행됩니다.
+    needs: build
+    
+    # GitHub 호스팅 환경에서 실행됩니다.
+    runs-on: ubuntu-latest
+    
+    # 배포 환경을 설정합니다.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
