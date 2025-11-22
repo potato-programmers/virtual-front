@@ -4,7 +4,7 @@ name: Deploy Vite Project to GitHub Pages
 on:
   push:
     branches:
-      - "feat/pages"
+      - "master"
   # Actions 탭에서 수동으로 이 워크플로우를 실행할 수 있도록 허용
   workflow_dispatch:
 
