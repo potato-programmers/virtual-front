@@ -34,6 +34,7 @@ async function initializeVRM() {
       './actions/hello.json',
       './actions/thankyou.json',
       './actions/love.json',
+      './actions/sorry.json', // "미안합니다" 애니메이션 추가
     ];
 
     for (const url of animationUrls) {
