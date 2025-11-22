@@ -35,8 +35,8 @@ export class VRMManager {
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(30.0, width / height, 0.1, 20.0);
-    this.camera.position.set(0.0, 1.6, 2.5);
-    this.camera.lookAt(0.0, 1.2, 0.0);
+    this.camera.position.set(0.0, 1.0, 2.5);
+    this.camera.lookAt(0.0, 1.05, 0.0);
 
     this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     this.renderer.setSize(width, height);
