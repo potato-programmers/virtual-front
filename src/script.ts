@@ -18,9 +18,9 @@ const v2 = document.getElementById("avatarVideo2") as HTMLVideoElement;
 
 // 재생할 영상 목록 (원하는 경로로 교체/추가하세요)
 const playlist = [
-  "./public/test.mp4",
-  "./public/test2.mp4",
-  // "./public/test3.mp4",
+  "test.mp4",
+  "test2.mp4",
+  "test3.mp4",
 ];
 
 let currentIndex = 0; // vShow에 표시 중인 인덱스
