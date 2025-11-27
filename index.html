@@ -15,7 +15,15 @@
 
     <!-- 왼쪽 하단 토글 -->
     <div class="toggle-box">
-      <button id="modeBtn">모드: 기본</button>
+      <button id="modeBtn">수어 -> 문자</button>
+    </div>
+    <div class="record-box hidden" id="record-box">
+      <button id="recordStartBtn">녹음 시작</button>
+      <button id="recordStopBtn">녹음 중단</button>
+      <span
+        id="recordNotice"
+        style="margin-left: 8px; font-size: 12px; color: #888"
+      ></span>
     </div>
 
     <!-- 자막 -->
@@ -24,5 +32,6 @@
     </div>
 
     <script type="module" src="./src/script.ts"></script>
+    <script type="module" src="./src/record.ts"></script>
   </body>
 </html>

@@ -75,7 +75,7 @@ window.addEventListener('keydown', (e) => {
 const modeBtn = document.getElementById("modeBtn");
 if (modeBtn) {
   let modeIndex = 0;
-  const modes = ["기본", "캐주얼", "프로", "게임"];
+  const modes = ["수어 -> 문자", "문자 -> 수어"];
   modeBtn.addEventListener("click", () => {
     modeIndex = (modeIndex + 1) % modes.length;
     modeBtn.innerText = `모드: ${modes[modeIndex]}`;
