@@ -5,27 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Camera Background UI</title>
     <link rel="stylesheet" href="src/style.css" />
-    <link rel="icon" type="image/svg" href="potato.svg">
   </head>
   <body>
     <!-- 카메라 영상 -->
     <video id="camera-bg" autoplay playsinline></video>
 
-    <!-- 아바타 박스 (영상) -->
-    <div class="avatar-box">
-      <video id="avatarVideo" muted playsinline preload="auto"></video>
-      <video
-        id="avatarVideo2"
-        muted
-        playsinline
-        preload="auto"
-        style="display: none"
-      ></video>
-    </div>
+    <!-- 아바타 박스 (VRM 캔버스) -->
+    <div class="avatar-box" id="avatar-container"></div>
 
     <!-- 왼쪽 하단 토글 -->
     <div class="toggle-box">
-      <button id="modeBtn">모드: 기본</button>
+      <button id="modeBtn">수어 -> 문자</button>
+    </div>
+    <div class="record-box hidden" id="record-box">
+      <button id="recordStartBtn">녹음 시작</button>
+      <button id="recordStopBtn">녹음 중단</button>
+      <span
+        id="recordNotice"
+        style="margin-left: 8px; font-size: 12px; color: #888"
+      ></span>
     </div>
 
     <!-- 자막 -->
@@ -33,6 +31,7 @@
       <div class="subtitle" id="subtitle">여기에 자막이 표시됩니다.</div>
     </div>
 
-    <script src="src/script.ts"></script>
+    <script type="module" src="./src/script.ts"></script>
+    <script type="module" src="./src/record.ts"></script>
   </body>
 </html>

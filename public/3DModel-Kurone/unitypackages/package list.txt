@@ -1,0 +1,16 @@
+-VRM-
+UniVRM		VRM 0.x	v0.127.0
+https://github.com/vrm-c/UniVRM/releases
+
+-VRC-
+VRChat SDK		3.7.1
+https://vrchat.com/home/download
+
+lilToon			1.8.2
+https://lilxyzw.github.io/lilToon/ja_JP/
+
+FaceEmo			1.5.5
+https://suzuryg.github.io/face-emo/ja/
+
+Modular Avatar		1.10.3
+https://modular-avatar.nadena.dev/ja
