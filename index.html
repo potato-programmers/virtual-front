@@ -10,13 +10,6 @@
     <!-- 카메라 영상 -->
     <video id="camera-bg" autoplay playsinline></video>
 
-    <!-- 아바타 박스 (VRM 캔버스) -->
-    <div class="avatar-box" id="avatar-container"></div>
-
-    <!-- 왼쪽 하단 토글 -->
-    <div class="toggle-box">
-      <button id="modeBtn">수어 -> 문자</button>
-    </div>
     <div class="record-box hidden" id="record-box">
       <button id="recordStartBtn">녹음 시작</button>
       <button id="recordStopBtn">녹음 중단</button>
@@ -27,11 +20,17 @@
     </div>
 
     <!-- 자막 -->
-    <div class="subtitle-box">
+    <div class="subtitle-box" id="subtitle-box">
       <div class="subtitle" id="subtitle">여기에 자막이 표시됩니다.</div>
     </div>
+    <input
+      id="subtitleInput"
+      type="text"
+      placeholder="자막 입력 후 엔터"
+      style="position: absolute; left: -9999px"
+    />
 
-    <script type="module" src="./src/script.ts"></script>
     <script type="module" src="./src/record.ts"></script>
+    <script type="module" src="./src/subtle.js"></script>
   </body>
 </html>

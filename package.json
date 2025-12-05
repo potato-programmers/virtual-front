@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@pixiv/three-vrm": "^3.4.4",
+    "es-hangul": "^2.3.8",
     "three": "^0.181.2"
   }
 }
