@@ -1,55 +1,70 @@
-const startBtn = document.getElementById("recordStartBtn");
-const stopBtn = document.getElementById("recordStopBtn");
+type SpeechRecognitionEvent = Event & {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+};
 
-const modeBtn = document.getElementById("modeBtn");
-const recordBox = document.getElementById("record-box");
-
-if (modeBtn && recordBox) {
-  let modeIndex = 0;
-  const modes = ["수어 -> 문자", "문자 -> 수어"];
-
-  modeBtn.innerText = `모드: ${modes[modeIndex]}`;
-  recordBox.classList.remove("hidden");
-
-  modeBtn.addEventListener("click", () => {
-    modeIndex = (modeIndex + 1) % modes.length;
-    modeBtn.innerText = `모드: ${modes[modeIndex]}`;
-
-    if (modes[modeIndex] === "수어 -> 문자") {
-      recordBox.classList.remove("hidden");
-    } else {
-      recordBox.classList.add("hidden");
-    }
-  });
+interface SpeechRecognitionInstance {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  start: () => void;
+  stop: () => void;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
 }
 
-const SpeechRecognition =
-  (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
 
-if (!SpeechRecognition) {
+const startBtn = document.getElementById("recordStartBtn") as HTMLButtonElement | null;
+const stopBtn = document.getElementById("recordStopBtn") as HTMLButtonElement | null;
+
+const subtitleEl = document.getElementById("subtitle") as HTMLDivElement | null;
+const SpeechRecognitionClass =
+  (window as Window &
+    typeof globalThis & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    }).SpeechRecognition ||
+  (window as Window &
+    typeof globalThis & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    }).webkitSpeechRecognition;
+
+if (!SpeechRecognitionClass) {
   console.error("Web Speech API를 지원하지 않는 브라우저입니다.");
 } else {
-  const recognition = new SpeechRecognition();
+  const recognition = new SpeechRecognitionClass();
   recognition.lang = "ko-KR";
-  recognition.continuous = true; 
-  recognition.interimResults = true; 
+  recognition.continuous = true;
+  recognition.interimResults = true;
 
   let isRecording = false;
   let finalTranscript = ""; 
 
+  const updateSubtitle = (text: string) => {
+    if (subtitleEl) {
+      subtitleEl.innerText = text.trim() || "인식된 문장이 여기에 표시됩니다.";
+    }
+  };
+
   recognition.onstart = () => {
     console.log("🎤 onstart: 음성 인식 시작");
+    updateSubtitle("음성을 듣는 중...");
   };
 
   recognition.onend = () => {
     console.log("🛑 onend: 음성 인식 종료");
     console.log("✅ 최종 인식 결과:", finalTranscript.trim());
+    updateSubtitle(finalTranscript || "인식이 종료되었습니다.");
 
     finalTranscript = "";
     isRecording = false;
   };
 
-  recognition.onerror = (e: any) => {
+  recognition.onerror = (e: { error: string }) => {
     console.error("❌ onerror:", e.error);
     isRecording = false;
   };
@@ -62,6 +77,7 @@ if (!SpeechRecognition) {
 
       if (result.isFinal) {
         finalTranscript += text + " ";
+        updateSubtitle(finalTranscript);
       }
 
       // console.log(result.isFinal ? "👉 확정된 문장:" : "⏳ 중간 인식:", text);
@@ -91,6 +107,7 @@ if (!SpeechRecognition) {
    
       recognition.stop();
       console.log("🛑 stop() 호출 (인식 마무리 후 onend 호출될 것)");
+      updateSubtitle(finalTranscript || "인식 결과를 정리하는 중입니다...");
  
     } catch (err: any) {
       console.log("stop 예외:", err?.message);

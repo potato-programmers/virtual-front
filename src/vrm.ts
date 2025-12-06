@@ -15,22 +15,32 @@ interface AnimationData {
 }
 
 export class VRMManager {
-  private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private renderer: THREE.WebGLRenderer;
-  private clock = new THREE.Clock();
-  public vrm: VRM | null = null;
+  private declare scene: THREE.Scene;
+  private declare camera: THREE.PerspectiveCamera;
+  private declare renderer: THREE.WebGLRenderer;
+  private clock: THREE.Clock;
+  public vrm: VRM | null;
 
-  private mixer: THREE.AnimationMixer | null = null;
-  private animations: Map<string, THREE.AnimationClip> = new Map();
-  private animationNames: string[] = [];
-  private currentAction: THREE.AnimationAction | null = null;
+  private mixer: THREE.AnimationMixer | null;
+  private animations: Map<string, THREE.AnimationClip>;
+  private animationNames: string[];
+  private currentAction: THREE.AnimationAction | null;
 
-  private state: 'idle' | 'signing' = 'idle';
-  private blinkTime = 0;
-  private nextBlinkTime = 0;
+  private state: 'idle' | 'signing';
+  private blinkTime: number;
+  private nextBlinkTime: number;
 
-  constructor(private container: HTMLElement) {
+  constructor(container: HTMLElement) {
+    this.clock = new THREE.Clock();
+    this.vrm = null;
+    this.mixer = null;
+    this.animations = new Map();
+    this.animationNames = [];
+    this.currentAction = null;
+    this.state = 'idle';
+    this.blinkTime = 0;
+    this.nextBlinkTime = 0;
+
     const { width, height } = container.getBoundingClientRect();
 
     this.scene = new THREE.Scene();
@@ -41,13 +51,12 @@ export class VRMManager {
     this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.container.appendChild(this.renderer.domElement);
+    container.appendChild(this.renderer.domElement);
 
     const light = new THREE.DirectionalLight(0xffffff, 3);
     light.position.set(1.0, 1.0, 1.0).normalize();
     this.scene.add(light);
 
-    this.animate = this.animate.bind(this);
     this.setBlinkTime();
   }
 
@@ -55,12 +64,17 @@ export class VRMManager {
     const loader = new GLTFLoader();
     loader.register((parser) => new VRMLoaderPlugin(parser));
     const gltf = await loader.loadAsync(modelUrl);
-    
-    this.vrm = gltf.userData.vrm;
-    this.scene.add(this.vrm.scene);
-    VRMUtils.rotateVRM0(this.vrm);
-    
-    this.mixer = new THREE.AnimationMixer(this.vrm.scene);
+    const loadedVrm = gltf.userData.vrm as VRM | undefined;
+
+    if (!loadedVrm) {
+      throw new Error('VRM 데이터를 가져오지 못했습니다.');
+    }
+
+    this.vrm = loadedVrm;
+    this.scene.add(loadedVrm.scene);
+    VRMUtils.rotateVRM0(loadedVrm);
+
+    this.mixer = new THREE.AnimationMixer(loadedVrm.scene);
     
     console.log('VRM model loaded successfully');
     this.animate();
@@ -167,11 +181,11 @@ export class VRMManager {
     }
 
     const breathingValue = (Math.sin(this.clock.elapsedTime * 0.7) * 0.5 + 0.5) * 0.05;
-    this.vrm.expressionManager?.setValue(VRMExpressionPresetName.A, breathingValue);
+    this.vrm.expressionManager?.setValue(VRMExpressionPresetName.Aa, breathingValue);
   }
 
   private animate(): void {
-    requestAnimationFrame(this.animate);
+    requestAnimationFrame(() => this.animate());
     const delta = this.clock.getDelta();
 
     if (this.vrm) {

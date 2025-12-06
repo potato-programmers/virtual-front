@@ -4,81 +4,208 @@ html {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  font-family: Arial, sans-serif;
+  font-family: "Pretendard", "Inter", "Noto Sans KR", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f4f5f7;
+  background: #05070f;
 }
 
-/* ▼ 카메라 영상 전체 배경 */
-#camera-bg {
+body::before {
+  content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
+  inset: 0;
+  background: radial-gradient(
+      circle at top,
+      rgba(64, 157, 255, 0.35),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(255, 94, 129, 0.35),
+      transparent 45%
+    );
   z-index: -1;
-  background: #000;
 }
 
-/* ▼ 아바타(초상화) */
-.avatar-box {
+.app-header {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 380px;
-  height: 440px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.6);
-  border: 2px solid white;
+  top: 48px;
+  left: 50px;
+  max-width: 420px;
+  padding: 24px 28px;
+  border-radius: 20px;
+  background: rgba(7, 9, 20, 0.7);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(5, 7, 15, 0.55);
+}
+
+.app-header h1 {
+  margin: 8px 0 12px;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #96a6ff;
+}
+
+.description {
+  margin: 2px 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(244, 245, 247, 0.85);
+}
+
+/* ▼ 왼쪽 하단 컨트롤 */
+.control-panel {
+  position: fixed;
+  left: 40px;
+  bottom: 40px;
+  width: 360px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  padding: 26px 28px;
+  border-radius: 22px;
+  background: rgba(8, 11, 24, 0.82);
+  box-shadow: 0 18px 60px rgba(5, 7, 15, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(22px);
 }
 
-.avatar-box video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* ▼ 왼쪽 하단 토글 */
-.toggle-box {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
+.panel-label {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244, 245, 247, 0.7);
+}
+
+.mode-chip {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f4f5f7;
+  background: linear-gradient(120deg, #7046ff, #ad5bff);
+  box-shadow: 0 12px 30px rgba(128, 85, 255, 0.4);
+  align-self: flex-start;
+  letter-spacing: 0.08em;
+}
+
+.panel-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(244, 245, 247, 0.78);
+}
+
+.primary-btn,
+.ghost-btn,
+.danger-btn {
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(120deg, #6082ff, #8a5dff);
+  color: #fff;
+  box-shadow: 0 15px 30px rgba(97, 128, 255, 0.4);
+}
+
+.ghost-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f5f7;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.danger-btn {
+  background: rgba(255, 96, 122, 0.18);
+  color: #ff728d;
+  border: 1px solid rgba(255, 114, 141, 0.4);
+}
+
+.primary-btn:active,
+.ghost-btn:active,
+.danger-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.record-actions {
   display: flex;
   gap: 10px;
 }
 
-.toggle-box button {
-  padding: 10px 16px;
-  background: white;
-  border-radius: 8px;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  font-weight: 600;
+.record-notice {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 /* ▼ 자막 영역 */
 .subtitle-box {
   position: fixed;
-  bottom: 90px;
+  bottom: 130px;
   width: 100%;
   display: flex;
   justify-content: center;
 }
 
 .subtitle {
-  padding: 10px 20px;
-  background: rgba(0, 0, 0, 0.7);
+  padding: 14px 32px;
+  background: rgba(8, 11, 24, 0.82);
   color: white;
-  font-size: 20px;
-  border-radius: 8px;
-  max-width: 80%;
+  font-size: 22px;
+  border-radius: 999px;
+  max-width: min(860px, 80%);
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 16px 46px rgba(5, 7, 15, 0.65);
 }
 
 .hidden {
   display: none !important;
+}
+
+@media (max-width: 1024px) {
+  .app-header {
+    position: static;
+    margin: 20px;
+  }
+
+  .control-panel {
+    position: static;
+    width: auto;
+    margin: 20px;
+  }
+
+  .subtitle-box {
+    bottom: 40px;
+  }
+}
+
+@media (max-width: 720px) {
+  body {
+    overflow: auto;
+  }
+
+  .record-actions {
+    flex-direction: column;
+  }
 }
