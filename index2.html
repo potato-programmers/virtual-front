@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-time Pose & Hand Estimation</title>
+    <style>
+        #container {
+            position: relative;
+            width: 640px;
+            height: 480px;
+            border: 1px solid black;
+        }
+        #canvas, #video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: scaleX(-1); /* 좌우 반전 (거울 모드) */
+        }
+    </style>
+</head>
+<body>
+    <h1>실시간 몸 & 손 포즈 예측</h1>
+    <p>카메라가 켜지고 잠시 후 몸과 손의 관절이 인식됩니다.</p>
+    <div id="container">
+        <video id="video" autoplay playsinline width="640" height="480"></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+
+    <!-- TensorFlow.js 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    
+    <!-- 포즈 & 손 감지 모델 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    
+    <!-- MediaPipe Hands (hand-pose-detection의 의존성) - ✨오류 해결을 위해 추가✨ -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    
+    <!-- 손 감지 모델 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script>
+
+    <script>
+        let poseDetector, handDetector, video;
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        async function setupCamera() {
+            video = document.getElementById('video');
+            const stream = await navigator.mediaDevices.getUserMedia({
+                'video': { width: 640, height: 480 },
+                'audio': false
+            });
+            video.srcObject = stream;
+
+            return new Promise((resolve) => {
+                video.onloadedmetadata = () => resolve(video);
+            });
+        }
+
+        async function loadModels() {
+            console.log("모델 로딩...");
+            // 1. 몸 포즈 감지 모델 (MoveNet)
+            const poseDetectorConfig = { modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING };
+            poseDetector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, poseDetectorConfig);
+
+            // 2. 손 포즈 감지 모델 (MediaPipeHands)
+            const handDetectorConfig = {
+                runtime: 'mediapipe',
+                solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands', // WASM 등 추가 리소스 로드 경로
+                modelType: 'full'
+            };
+            handDetector = await handPoseDetection.createDetector(handPoseDetection.SupportedModels.MediaPipeHands, handDetectorConfig);
+            
+            console.log("모든 모델 로딩 완료.");
+        }
+
+        // 몸 포즈 그리기
+        function drawPose(pose) {
+            if (!pose) return;
+            // 몸 관절 그리기
+            for (const keypoint of pose.keypoints) {
+                if (keypoint.score > 0.3) {
+                    ctx.beginPath();
+                    ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'aqua';
+                    ctx.fill();
+                }
+            }
+            // 몸 뼈대 그리기
+            const adjacentPairs = poseDetection.util.getAdjacentPairs(poseDetection.SupportedModels.MoveNet);
+            for (const [startIdx, endIdx] of adjacentPairs) {
+                const startPoint = pose.keypoints[startIdx];
+                const endPoint = pose.keypoints[endIdx];
+                if (startPoint.score > 0.3 && endPoint.score > 0.3) {
+                    ctx.beginPath();
+                    ctx.moveTo(startPoint.x, startPoint.y);
+                    ctx.lineTo(endPoint.x, endPoint.y);
+                    ctx.strokeStyle = 'lime';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // 손 포즈 그리기
+        function drawHands(hands) {
+            if (!hands || hands.length === 0) return;
+            
+            const fingerLookup = {
+                thumb: [0, 1, 2, 3, 4],
+                indexFinger: [0, 5, 6, 7, 8],
+                middleFinger: [0, 9, 10, 11, 12],
+                ringFinger: [0, 13, 14, 15, 16],
+                pinky: [0, 17, 18, 19, 20],
+            };
+
+            for (const hand of hands) {
+                // 손 관절 그리기
+                for (const keypoint of hand.keypoints) {
+                    ctx.beginPath();
+                    ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'red'; // 손 관절은 빨간색
+                    ctx.fill();
+                }
+
+                // 손 뼈대 그리기
+                ctx.strokeStyle = 'orange'; // 손 뼈대는 주황색
+                ctx.lineWidth = 2;
+                for (const finger in fingerLookup) {
+                    const points = fingerLookup[finger].map(idx => hand.keypoints[idx]);
+                    for (let i = 0; i < points.length - 1; i++) {
+                        const start = points[i];
+                        const end = points[i+1];
+                        ctx.beginPath();
+                        ctx.moveTo(start.x, start.y);
+                        ctx.lineTo(end.x, end.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        async function render() {
+            // 1. 비디오에서 몸과 손 포즈 동시 예측
+            const [poses, hands] = await Promise.all([
+                poseDetector.estimatePoses(video),
+                handDetector.estimateHands(video)
+            ]);
+
+            // 2. 캔버스 초기화
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 3. 예측된 포즈들 그리기
+            if (poses.length > 0) {
+                drawPose(poses[0]);
+            }
+            if (hands.length > 0) {
+                drawHands(hands);
+            }
+
+            // 4. 다음 프레임에서 반복
+            requestAnimationFrame(render);
+        }
+
+        async function main() {
+            await tf.setBackend('webgl');
+            await setupCamera();
+            video.play();
+            await loadModels();
+            render();
+        }
+
+        main();
+    </script>
+</body>
+</html>
