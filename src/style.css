@@ -37,6 +37,7 @@ body::before {
   background: rgba(7, 9, 20, 0.7);
   backdrop-filter: blur(16px);
   box-shadow: 0 20px 60px rgba(5, 7, 15, 0.55);
+  z-index: 10;
 }
 
 .app-header h1 {
@@ -237,4 +238,15 @@ body::before {
   .record-actions {
     flex-direction: column;
   }
+}
+
+#camera-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  background: black;
 }

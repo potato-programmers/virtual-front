@@ -16,7 +16,7 @@
         <p class="description">아바타 수어 번역 서비스</p>
       </div>
     </header>
-
+    <video id="camera-bg" autoplay playsinline muted></video>
     <!-- 왼쪽 하단 컨트롤 -->
     <div class="control-panel">
       <div class="panel-section">
@@ -39,15 +39,8 @@
     <div class="subtitle-box" id="subtitle-box">
       <div class="subtitle" id="subtitle">여기에 자막이 표시됩니다.</div>
     </div>
-    <input
-      id="subtitleInput"
-      type="text"
-      placeholder="자막 입력 후 엔터"
-      class="subtitle-input"
-      autocomplete="off"
-    />
 
-    <script type="module" src="./src/record.ts"></script>
+    <script type="module" src="./src/record.js"></script>
     <script type="module" src="./src/subtle.js"></script>
   </body>
 </html>
