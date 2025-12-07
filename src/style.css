@@ -24,7 +24,7 @@ body::before {
       rgba(255, 94, 129, 0.35),
       transparent 45%
     );
-  z-index: -1;
+  z-index: 0;
 }
 
 .app-header {
