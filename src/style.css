@@ -250,3 +250,8 @@ body::before {
   z-index: 0;
   background: black;
 }
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

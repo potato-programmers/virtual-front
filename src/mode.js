@@ -1,25 +1,38 @@
 const modeBtn = document.getElementById("modeBtn");
 const video = document.getElementById("camera-bg");
 
-// 초기 모드
-let mode = "문자 → 수어"; // 버튼에 적힌 모드
+let mode = "문자 → 수어";
 
-// 비디오 초기 상태: "수어 → 문자"일 때만 보이게
-updateVideoVisibility();
+const recordStartBtn = document.getElementById("recordStartBtn");
+const recordStopBtn = document.getElementById("recordStopBtn");
+
+// UI 전체 업데이트 함수
+function updateUi() {
+  if (mode === "수어 → 문자") {
+    // 카메라 모드
+    video.classList.remove("hidden");
+    document.body.classList.add("video-active");
+    document.body.classList.remove("no-video");
+
+    recordStartBtn.disabled = true;
+    recordStopBtn.disabled = true;
+  } else {
+    // 텍스트 입력 모드
+    video.classList.add("hidden");
+    document.body.classList.remove("video-active");
+    document.body.classList.add("no-video");
+
+    recordStartBtn.disabled = false;
+    recordStopBtn.disabled = false;
+  }
+}
+
+// 초기 UI 설정
+updateUi();
 
 modeBtn.addEventListener("click", () => {
-  // 🔄 모드 토글
   mode = mode === "문자 → 수어" ? "수어 → 문자" : "문자 → 수어";
   modeBtn.textContent = mode;
 
-  // 비디오 표시 갱신
-  updateVideoVisibility();
+  updateUi(); // 🔥 반드시 호출해야 함
 });
-
-function updateVideoVisibility() {
-  if (mode === "수어 → 문자") {
-    video.classList.remove("hidden"); // ✔ 보여준다
-  } else {
-    video.classList.add("hidden"); // ✘ 숨긴다
-  }
-}
