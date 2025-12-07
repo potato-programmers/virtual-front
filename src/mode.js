@@ -3,7 +3,11 @@ const video = document.getElementById("camera-bg");
 const canvas = document.getElementById("canvas");
 const panelDescription = document.querySelector(".panel-description");
 
+const subtitle = document.getElementById("subtitle");
+const subtitleBox = document.getElementById("subtitle-box");
+
 let mode = "문자 → 수어";
+window.appMode = mode; // 최초 등록
 
 const recordStartBtn = document.getElementById("recordStartBtn");
 const recordStopBtn = document.getElementById("recordStopBtn");
@@ -19,26 +23,20 @@ function updateDescription() {
   }
 }
 
-// UI 전체 업데이트 함수
 function updateUi() {
   if (mode === "수어 → 문자") {
-    // 카메라 모드
     video.classList.remove("hidden");
     canvas.classList.remove("hidden");
-    document.body.classList.add("video-active");
-    document.body.classList.remove("no-video");
 
-    recordStartBtn.disabled = true;
-    recordStopBtn.disabled = true;
+    recordStartBtn.textContent = "녹화 시작";
+    recordStopBtn.textContent = "녹화 중단";
   } else {
-    // 텍스트 입력 모드
+    subtitle.style.opacity = "0";
     video.classList.add("hidden");
     canvas.classList.add("hidden");
-    document.body.classList.remove("video-active");
-    document.body.classList.add("no-video");
 
-    recordStartBtn.disabled = false;
-    recordStopBtn.disabled = false;
+    recordStartBtn.textContent = "녹음 시작";
+    recordStopBtn.textContent = "녹음 중단";
   }
 
   updateDescription();
@@ -49,7 +47,7 @@ updateUi();
 
 modeBtn.addEventListener("click", () => {
   mode = mode === "문자 → 수어" ? "수어 → 문자" : "문자 → 수어";
+  window.appMode = mode; // 🔥🔥🔥 여기 추가해야 한다!!
   modeBtn.textContent = mode;
-
   updateUi();
 });
