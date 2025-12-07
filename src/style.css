@@ -36,7 +36,8 @@ body::before {
 }
 
 /* 비디오와 캔버스는 body의 배경 위에, 다른 UI 요소들보다는 아래에 위치하도록 z-index: 0으로 설정합니다. */
-#camera-bg, #canvas {
+#camera-bg,
+#canvas {
   position: fixed;
   top: 0;
   left: 0;
@@ -46,7 +47,6 @@ body::before {
   z-index: 0;
   transform: scaleX(-1); /* 좌우 반전 (거울 모드) */
 }
-
 
 .app-header {
   position: fixed;
@@ -266,4 +266,73 @@ body::before {
 button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+.panel-description {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+/* 🔥 로딩 박스 (오버레이) */
+#loading-box {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  color: white;
+  font-size: 18px;
+
+  z-index: 9999;
+  animation: fadeIn 0.4s ease;
+}
+
+/* 🔥 네온 글로우 스피너 */
+.spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  position: relative;
+  border: 5px solid rgba(255, 255, 255, 0.1);
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+/* 스피너에 그라데이션 라인 추가 */
+.spinner::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  border: 5px solid transparent;
+
+  /* 🔥 배경과 어울리는 네온 컬러 */
+  border-top-color: rgba(64, 157, 255, 0.9); /* 파란빛 */
+  border-left-color: rgba(255, 94, 129, 0.9); /* 핑크빛 */
+
+  filter: drop-shadow(0 0 6px rgba(64, 157, 255, 0.6))
+    drop-shadow(0 0 8px rgba(255, 94, 129, 0.6));
+
+  animation: spin 1.2s ease-in-out infinite;
+}
+
+/* 회전 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 페이드 인 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
