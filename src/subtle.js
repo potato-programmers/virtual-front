@@ -1,46 +1,39 @@
 import { convertQwertyToHangul } from "es-hangul";
 
-console.log("🔥 subtle.js loaded");
-
 let buffer = "";
-const subtitle = document.getElementById("subtitle");
+const subtitleText = document.getElementById("subtitle-text");
 const subtitleBox = document.getElementById("subtitle-box");
 
-function updateSubtitle(text) {
-  if (!subtitle) return;
-  subtitle.style.opacity = "1";
+// 자막 표시
+function showSubtitle(text) {
   subtitleBox.style.opacity = "1";
-  subtitle.textContent = text;
+  subtitleText.textContent = text;
+}
+
+// 자막 숨기기
+function hideSubtitle() {
+  subtitleBox.style.opacity = "0";
 }
 
 function updateSubtitleFromBuffer() {
-  const mode = window.appMode; // 🔥 항상 최신 모드 가져오기
+  const mode = window.appMode;
+  if (mode === "문자 → 수어") return; // 입력 차단
 
-  if (mode === "문자 → 수어") {
-    console.log("❌ 문자→수어 모드이므로 입력 차단");
-    return;
-  }
-
-  let raw = buffer.replace(/[0-9]/g, "");
-  const text = convertQwertyToHangul(raw).trim();
-  updateSubtitle(text || "입력된 문장이 없습니다.");
+  const clean = buffer.replace(/[0-9]/g, "");
+  const text = convertQwertyToHangul(clean).trim();
+  showSubtitle(text || "입력된 문장이 없습니다.");
 }
 
 document.addEventListener("keydown", (e) => {
-  const mode = window.appMode; // 🔥 최신 모드 다시 체크
-  console.log("keydown:", e.key, "mode:", mode);
+  const mode = window.appMode;
 
-  // ⛔ 문자 → 수어 모드에서는 입력 자체 차단
-  if (mode === "문자 → 수어") {
-    console.log("❌ 문자→수어 모드 - 키입력 차단됨");
-    return;
-  }
+  if (mode === "문자 → 수어") return; // 입력 불가 모드
 
-  // 입력 허용 구간 (수어 → 문자일 때만)
   if (e.key === "1") {
     e.preventDefault();
+    console.log("1번 → 버퍼 초기화 & 자막 숨김");
     buffer = "";
-    subtitle.style.opacity = "0";
+    hideSubtitle();
     return;
   }
 
@@ -58,7 +51,7 @@ document.addEventListener("keydown", (e) => {
 
   if (e.key === "Escape") {
     buffer = "";
-    subtitle.style.opacity = "0";
+    hideSubtitle();
     return;
   }
 
