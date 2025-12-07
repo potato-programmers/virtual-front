@@ -31,7 +31,6 @@ function updateUi() {
     recordStartBtn.textContent = "녹화 시작";
     recordStopBtn.textContent = "녹화 중단";
   } else {
-    subtitle.style.opacity = "0";
     video.classList.add("hidden");
     canvas.classList.add("hidden");
 
