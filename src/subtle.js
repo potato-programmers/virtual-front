@@ -17,6 +17,7 @@ function hideSubtitle() {
 
 function updateSubtitleFromBuffer() {
   const mode = window.appMode;
+
   if (mode === "문자 → 수어") return; // 입력 차단
 
   const clean = buffer.replace(/[0-9]/g, "");
@@ -27,8 +28,7 @@ function updateSubtitleFromBuffer() {
 document.addEventListener("keydown", (e) => {
   const mode = window.appMode;
 
-  if (mode === "문자 → 수어") return; // 입력 불가 모드
-
+  // 🔥 1번은 무조건 작동해야 하므로 최우선 처리
   if (e.key === "1") {
     e.preventDefault();
     console.log("1번 → 버퍼 초기화 & 자막 숨김");
@@ -37,6 +37,13 @@ document.addEventListener("keydown", (e) => {
     return;
   }
 
+  // 🔥 그 아래에서만 모드 차단 적용
+  if (mode === "문자 → 수어") {
+    console.log("문자→수어 모드 - 일반 입력 차단");
+    return;
+  }
+
+  // 🔥 이하 수어 → 문자 입력 처리
   if (e.key === "Enter") {
     e.preventDefault();
     updateSubtitleFromBuffer();
