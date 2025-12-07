@@ -11,6 +11,9 @@ importers:
       '@pixiv/three-vrm':
         specifier: ^3.4.4
         version: 3.4.4(three@0.181.2)
+      es-hangul:
+        specifier: ^2.3.8
+        version: 2.3.8
       three:
         specifier: ^0.181.2
         version: 0.181.2
@@ -212,6 +215,9 @@ packages:
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
+
+  es-hangul@2.3.8:
+    resolution: {integrity: sha512-VrJuqYBC7W04aKYjCnswomuJNXQRc0q33SG1IltVrRofi2YEE6FwVDPlsEJIdKbHwsOpbBL/mk9sUaBxVpbd+w==}
 
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
@@ -543,6 +549,8 @@ snapshots:
   '@webgpu/types@0.1.66': {}
 
   detect-libc@2.1.2: {}
+
+  es-hangul@2.3.8: {}
 
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:

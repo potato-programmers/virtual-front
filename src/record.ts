@@ -1,5 +1,25 @@
+type SpeechRecognitionEvent = Event & {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+};
+
+interface SpeechRecognitionInstance {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  start: () => void;
+  stop: () => void;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
+
 const startBtn = document.getElementById("recordStartBtn");
 const stopBtn = document.getElementById("recordStopBtn");
+const subtitleEl = document.getElementById("subtitle") as HTMLDivElement | null;
 
 const modeBtn = document.getElementById("modeBtn");
 const recordBox = document.getElementById("record-box");
@@ -23,34 +43,51 @@ if (modeBtn && recordBox) {
   });
 }
 
-const SpeechRecognition =
-  (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+const SpeechRecognitionClass =
+  (window as Window &
+    typeof globalThis & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    }).SpeechRecognition ||
+  (window as Window &
+    typeof globalThis & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    }).webkitSpeechRecognition;
 
-if (!SpeechRecognition) {
+const updateSubtitle = (text: string) => {
+  if (!subtitleEl) return;
+  subtitleEl.innerText = text.trim() || "인식된 문장이 여기에 표시됩니다.";
+};
+
+if (!SpeechRecognitionClass) {
   console.error("Web Speech API를 지원하지 않는 브라우저입니다.");
 } else {
-  const recognition = new SpeechRecognition();
+  const recognition = new SpeechRecognitionClass();
   recognition.lang = "ko-KR";
-  recognition.continuous = true; 
-  recognition.interimResults = true; 
+  recognition.continuous = true;
+  recognition.interimResults = true;
 
   let isRecording = false;
-  let finalTranscript = ""; 
+  let finalTranscript = "";
 
   recognition.onstart = () => {
     console.log("🎤 onstart: 음성 인식 시작");
+    updateSubtitle("음성을 듣는 중...");
   };
 
   recognition.onend = () => {
     console.log("🛑 onend: 음성 인식 종료");
     console.log("✅ 최종 인식 결과:", finalTranscript.trim());
+    updateSubtitle(finalTranscript || "인식이 종료되었습니다.");
 
     finalTranscript = "";
     isRecording = false;
   };
 
-  recognition.onerror = (e: any) => {
+  recognition.onerror = (e: { error: string }) => {
     console.error("❌ onerror:", e.error);
+    updateSubtitle("음성 인식 중 오류가 발생했습니다.");
     isRecording = false;
   };
 
@@ -62,6 +99,7 @@ if (!SpeechRecognition) {
 
       if (result.isFinal) {
         finalTranscript += text + " ";
+        updateSubtitle(finalTranscript);
       }
 
       // console.log(result.isFinal ? "👉 확정된 문장:" : "⏳ 중간 인식:", text);
