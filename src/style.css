@@ -18,6 +18,10 @@ body {
   position: relative; /* z-index 컨텍스트를 위해 추가 */
 }
 
+button:focus {
+  outline: none;
+}
+
 body::before {
   content: "";
   position: fixed;
