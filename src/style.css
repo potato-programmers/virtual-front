@@ -1,3 +1,7 @@
+html {
+  background: transparent;
+}
+
 body,
 html {
   padding: 0;
@@ -7,7 +11,11 @@ html {
   font-family: "Pretendard", "Inter", "Noto Sans KR", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #f4f5f7;
+}
+
+body {
   background: #05070f;
+  position: relative; /* z-index 컨텍스트를 위해 추가 */
 }
 
 body::before {
@@ -24,8 +32,21 @@ body::before {
       rgba(255, 94, 129, 0.35),
       transparent 45%
     );
-  z-index: 0;
+  z-index: -1;
 }
+
+/* 비디오와 캔버스는 body의 배경 위에, 다른 UI 요소들보다는 아래에 위치하도록 z-index: 0으로 설정합니다. */
+#camera-bg, #canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  transform: scaleX(-1); /* 좌우 반전 (거울 모드) */
+}
+
 
 .app-header {
   position: fixed;
@@ -37,7 +58,7 @@ body::before {
   background: rgba(7, 9, 20, 0.7);
   backdrop-filter: blur(16px);
   box-shadow: 0 20px 60px rgba(5, 7, 15, 0.55);
-  z-index: 10;
+  z-index: 10; /* 비디오(0)보다 높으므로 OK */
 }
 
 .app-header h1 {
@@ -76,6 +97,7 @@ body::before {
   box-shadow: 0 18px 60px rgba(5, 7, 15, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(22px);
+  z-index: 10; /* 비디오(0)보다 높으므로 OK */
 }
 
 .panel-section {
@@ -165,6 +187,7 @@ body::before {
   width: 100%;
   display: flex;
   justify-content: center;
+  z-index: 10; /* 비디오(0)보다 높으므로 OK */
 }
 
 .subtitle {
@@ -238,17 +261,6 @@ body::before {
   .record-actions {
     flex-direction: column;
   }
-}
-
-#camera-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  z-index: 0;
-  background: black;
 }
 
 button:disabled {

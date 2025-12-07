@@ -61,20 +61,20 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// 카메라 배경 실행
-async function startCameraBackground() {
-  const video = document.getElementById("camera-bg");
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user" },
-      audio: false,
-    });
-
-    video.srcObject = stream;
-  } catch (err) {
-    console.error("카메라 접근 실패:", err);
-  }
-}
-
-startCameraBackground();
+// // 카메라 배경 실행
+// async function startCameraBackground() {
+//   const video = document.getElementById("camera-bg");
+//
+//   try {
+//     const stream = await navigator.mediaDevices.getUserMedia({
+//       video: { facingMode: "user" },
+//       audio: false,
+//     });
+//
+//     video.srcObject = stream;
+//   } catch (err) {
+//     console.error("카메라 접근 실패:", err);
+//   }
+// }
+//
+// startCameraBackground();

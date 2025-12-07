@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="src/style.css" />
   </head>
   <body>
+    <!-- 비디오와 캔버스를 body 바로 아래에 배치 -->
+    <video id="camera-bg" autoplay playsinline muted></video>
+    <canvas id="canvas"></canvas>
+
     <!-- 상단 안내 -->
     <header class="app-header">
       <div>
@@ -16,7 +20,7 @@
         <p class="description">아바타 수어 번역 서비스</p>
       </div>
     </header>
-    <video id="camera-bg" autoplay playsinline muted></video>
+
     <!-- 왼쪽 하단 컨트롤 -->
     <div class="control-panel">
       <div class="panel-section">
@@ -42,8 +46,17 @@
       <div class="subtitle" id="subtitle">여기에 자막이 표시됩니다.</div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script>
+
+
     <script type="module" src="./src/record.js"></script>
     <script type="module" src="./src/subtle.js"></script>
+    <script type="module" src="./src/pose-app.ts"></script>
     <script type="module" src="./src/mode.js"></script>
   </body>
 </html>
