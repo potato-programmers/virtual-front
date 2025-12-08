@@ -22,7 +22,12 @@ function updateSubtitleFromBuffer() {
 
   const clean = buffer.replace(/[0-9]/g, "");
   const text = convertQwertyToHangul(clean).trim();
-  showSubtitle(text || "입력된 문장이 없습니다.");
+
+  if (text.length === 0) {
+    return;
+  }
+
+  showSubtitle(text);
 }
 
 document.addEventListener("keydown", (e) => {
@@ -61,6 +66,25 @@ document.addEventListener("keydown", (e) => {
     hideSubtitle();
     return;
   }
+
+  if (e.key === "8") {
+    e.preventDefault();
+    buffer = "안녕하세요";
+    return;
+  }
+
+  if (e.key === "9") {
+    e.preventDefault();
+    buffer = "만나서 반갑습니다";
+    return;
+  }
+
+  if (e.key === "0") {
+    e.preventDefault();
+    buffer = "화장실 어디에요";
+    return;
+  }
+
 
   if (e.key.length === 1) {
     buffer += e.key;
